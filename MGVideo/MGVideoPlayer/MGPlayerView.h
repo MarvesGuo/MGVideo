@@ -20,6 +20,8 @@
 @property (nonatomic ,readonly) AVPlayerLayer *playerLayer;
 @property (nonatomic ,readonly) AVPlayerItem *item;
 
+@property (nonatomic ,readonly,getter = isPlaying) BOOL playing;
+
 @property (nonatomic, weak) id<MGPlayerViewDelegate> delegate;
 
 - (instancetype)initWithFrame:(CGRect)frame videoURL:(NSString *)videoURL delegate:(id<MGPlayerViewDelegate> )delegate;
@@ -41,5 +43,8 @@
 @optional
 
 - (void)mg_playerView:(MGPlayerView *)playerView didChangeWithCurrentTime:(NSString *)timeString sliderValue:(float)sliderValue;
+
+- (void)mg_playerViewDidFinishPlay:(MGPlayerView *)playerView;
+
 
 @end

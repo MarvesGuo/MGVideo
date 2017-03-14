@@ -98,10 +98,15 @@
 - (void)jumpToPercent:(CGFloat)percent
 {
     _canRefreshSlider = NO;
+    [_player pause];
     NSTimeInterval toTime = percent *_videoLength;
     [_player seekToTime:CMTimeMake(toTime, 1) completionHandler:^(BOOL finished)
     {
         _canRefreshSlider = finished;
+        if (finished)
+        {
+            [_player play];
+        }
     }];
 
 }
@@ -236,6 +241,12 @@
 {
     [_player removeTimeObserver:_timeObserver];
     _timeObserver =  nil;
+}
+
+#pragma mark getter setter
+- (BOOL)isPlaying
+{    // rate ==1.0，表示正在播放；rate == 0.0，暂停；rate == -1.0，播放失败
+    return _player.rate == 1.0;
 }
 
 

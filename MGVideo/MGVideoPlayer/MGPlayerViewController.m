@@ -8,19 +8,37 @@
 
 #import "MGPlayerViewController.h"
 #import "MGPlayerView.h"
+#import <MediaPlayer/MediaPlayer.h>
+
+typedef NS_ENUM(NSInteger, MGTouchType)
+{
+    MGTouchTypeNone = 0,
+    MGTouchTypeLeft,        //触摸左边 音量
+    MGTouchTypeMiddle,      //触摸中间 快进
+    MGTouchTypeRight        //触摸右边 亮度
+};
 
 @interface MGPlayerViewController ()
 <
     MGPlayerViewDelegate
 >
+{
+    BOOL __isSliderDragging;
+    
+    MGTouchType __currentTouchType;
+    
+    CGFloat __beginTouchX;
+    CGFloat __offsetX;
+    CGFloat __beginTouchY;
+    CGFloat __offsetY;
+}
 
 @property (nonatomic,weak) MGPlayerView   *_playerView;
 
+@property (nonatomic,weak) UILabel    *_swipeInfoLabel;
 @property (nonatomic,weak) UIButton   *_playButton;
 @property (nonatomic,weak) UISlider   *_slider;
 @property (nonatomic,weak) UILabel    *_timeLabel;
-
-@property (nonatomic,assign) BOOL _isSliderDragging;
 
 @end
 
@@ -61,6 +79,12 @@
     }
 }
 
+- (void)mg_playerViewDidFinishPlay:(MGPlayerView *)playerView
+{
+    //刷新播放按钮
+    [__playButton setTitle:@"播放" forState:UIControlStateNormal];
+}
+
 
 #pragma mark - event response
 
@@ -71,8 +95,7 @@
 
 - (void)playButtonAction
 {
-    // rate ==1.0，表示正在播放；rate == 0.0，暂停；rate == -1.0，播放失败
-    if (__playerView.player.rate == 1.0)
+    if ([__playerView isPlaying])
     {
         [self pauseVideoAction];
     }
@@ -144,6 +167,7 @@
 
     [self _addBackButton];
     [self _addPlayerView];
+    [self _addSwipeInfoLabel];
     [self _addBottomView];
     
     [self _addGestures];
@@ -164,6 +188,20 @@
     MGPlayerView *playerView = [[MGPlayerView alloc]initWithFrame:CGRectMake(0, 60, [UIScreen mainScreen].bounds.size.height, [UIScreen mainScreen].bounds.size.width - 120) videoURL:nil delegate:self];
     [self.view addSubview:playerView];
     self._playerView = playerView;
+}
+
+- (void)_addSwipeInfoLabel
+{
+    UILabel *swipeInfoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 150, 40)];
+    swipeInfoLabel.center = CGPointMake(self.view.bounds.size.height/2.0, self.view.bounds.size.width/2.0);
+    swipeInfoLabel.font = [UIFont systemFontOfSize:14];
+    swipeInfoLabel.textColor = [UIColor whiteColor];
+    swipeInfoLabel.textAlignment = NSTextAlignmentLeft;
+    swipeInfoLabel.adjustsFontSizeToFitWidth = YES;
+    swipeInfoLabel.text = @"快进 00:00/00:00";
+    swipeInfoLabel.hidden = YES;
+    [self.view addSubview:swipeInfoLabel];
+    __swipeInfoLabel = swipeInfoLabel;
 }
 
 - (void)_addBottomView
@@ -218,7 +256,179 @@
 
 
 #pragma mark - override
-#pragma mark --支持横屏
+
+#pragma mark -- 滑动快进后退
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+    
+    UITouch *oneTouch = [touches anyObject];
+    __beginTouchX = [oneTouch locationInView:oneTouch.view].x;
+    __beginTouchY = [oneTouch locationInView:oneTouch.view].y;
+    
+    if (__beginTouchX <= 120 && __beginTouchX >= 0)
+    {
+        __currentTouchType = MGTouchTypeLeft;
+    }
+    else if (__beginTouchX < self.view.frame.size.width - 120 && __beginTouchX >120)
+    {
+        __currentTouchType = MGTouchTypeMiddle;
+    }
+    else if (__beginTouchX <= self.view.frame.size.width && __beginTouchX >= self.view.frame.size.width - 120)
+    {
+        __currentTouchType = MGTouchTypeRight;
+    }
+    else
+    {
+        __currentTouchType = MGTouchTypeNone;
+    }
+    
+}
+
+
+//滑动快进/快退    (滑动一个个屏，走50%)
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [super touchesMoved:touches withEvent:event];
+    
+    if (__currentTouchType == MGTouchTypeMiddle && [__playerView isPlaying] && __offsetX != 0)
+    {
+        [__playerView pause];
+    }
+    
+    UITouch *oneTouch = [touches anyObject];
+    __offsetX = [oneTouch locationInView:oneTouch.view].x - __beginTouchX;
+    __offsetY = [oneTouch locationInView:oneTouch.view].y - __beginTouchY;
+
+    CGFloat deltaPercentX = __offsetX / self.view.frame.size.height;
+    CGFloat deltaPercentY = -__offsetY / self.view.frame.size.width;
+    
+    NSLog(@" ====== %f",deltaPercentY);
+    
+    switch (__currentTouchType)
+    {
+        case MGTouchTypeLeft:
+        {
+            
+            MPVolumeView *volumeView = [[MPVolumeView alloc] init];
+            UISlider* volumeViewSlider = nil;
+            for (UIView *view in [volumeView subviews]){
+                if ([view.class.description isEqualToString:@"MPVolumeSlider"])
+                {
+                    volumeViewSlider = (UISlider*)view;
+                    break;
+                }
+            }
+            
+            // retrieve system volume
+            CGFloat systemVolume = volumeViewSlider.value;
+            CGFloat volume = systemVolume + deltaPercentY;
+            // change system volume, the value is between 0.0f and 1.0f
+            
+            [volumeViewSlider setValue:volume animated:YES];
+            // send UI control event to make the change effect right now.
+            [volumeViewSlider sendActionsForControlEvents:UIControlEventTouchUpInside];
+            
+        }
+            break;
+        case MGTouchTypeMiddle:
+        {
+            CGFloat toTimePercent = __slider.value + deltaPercentX;
+            toTimePercent = MIN(1, toTimePercent);
+            toTimePercent = MAX(0, toTimePercent);
+            
+            if (__offsetX > 0)
+            {
+                __swipeInfoLabel.hidden = NO;
+                __swipeInfoLabel.text = [NSString stringWithFormat:@">>> %@",[__playerView timeShowStringFromSliderValue:toTimePercent]];
+            }
+            else if (__offsetX < 0)
+            {
+                __swipeInfoLabel.hidden = NO;
+                __swipeInfoLabel.text = [NSString stringWithFormat:@"<<< %@",[__playerView timeShowStringFromSliderValue:toTimePercent]];
+            }
+            else
+            {
+                __swipeInfoLabel.hidden = YES;
+            }
+        }
+            break;
+        case MGTouchTypeRight:
+        {
+            CGFloat brightness = [UIScreen mainScreen].brightness - deltaPercentY;
+            brightness = MIN(1, brightness);
+            brightness = MAX(0, brightness);
+            [[UIScreen mainScreen] setBrightness: brightness];//0.5是自己设定认为比较合适的亮度值
+        }
+            break;
+        case MGTouchTypeNone:
+        {
+            
+        }
+            break;
+        default:
+            break;
+    }
+    
+    
+}
+
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
+{
+    UITouch *oneTouch = [touches anyObject];
+    __offsetX = [oneTouch locationInView:oneTouch.view].x - __beginTouchX;
+    __offsetY = [oneTouch locationInView:oneTouch.view].y - __beginTouchY;
+    
+    CGFloat deltaPercentX = __offsetX / self.view.frame.size.height;
+    CGFloat deltaPercentY = __offsetY / self.view.frame.size.width;
+    
+    switch (__currentTouchType)
+    {
+        case MGTouchTypeLeft:
+        {
+            
+        }
+            break;
+        case MGTouchTypeMiddle:
+        {
+            __swipeInfoLabel.hidden = YES;
+            CGFloat toTimePercent = __slider.value + deltaPercentX;
+            toTimePercent = MIN(1, toTimePercent);
+            toTimePercent = MAX(0, toTimePercent);
+            [__playerView jumpToPercent:toTimePercent];
+            
+        }
+            break;
+        case MGTouchTypeRight:
+        {
+            
+        }
+            break;
+        case MGTouchTypeNone:
+        {
+            
+        }
+            break;
+        default:
+            break;
+    }
+    
+    __beginTouchX = 0;
+    __offsetX = 0;
+    
+    __beginTouchY = 0;
+    __offsetY = 0;
+
+}
+
+- (void) touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+
+}
+
+
+#pragma mark -- 支持横屏
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIDeviceOrientationLandscapeLeft);
