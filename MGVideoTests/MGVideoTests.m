@@ -2,7 +2,7 @@
 //  MGVideoTests.m
 //  MGVideoTests
 //
-//  Created by guoqianling on 2017/3/14.
+//  Created by MarvesG on 2017/3/14.
 //  Copyright © 2017年 MarvesG. All rights reserved.
 //
 
