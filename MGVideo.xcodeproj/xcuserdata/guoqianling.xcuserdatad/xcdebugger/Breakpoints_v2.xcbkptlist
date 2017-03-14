@@ -9,13 +9,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MGVideo/MGVideoPlayer/MGPlayerViewController.m"
-            timestampString = "511164290.021606"
+            filePath = "MGVideo/MGVideoPlayer/MGPlayerView.m"
+            timestampString = "511174335.292212"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "26"
-            endingLineNumber = "26"
-            landmarkName = "-dealloc"
+            startingLineNumber = "238"
+            endingLineNumber = "238"
+            landmarkName = "-timeShowStringFromTime:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MGVideo/MGVideoPlayer/MGPlayerView.m"
+            timestampString = "511174335.292212"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "232"
+            endingLineNumber = "232"
+            landmarkName = "-timeShowStringFromTime:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
