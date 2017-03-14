@@ -14,6 +14,8 @@
 @property (nonatomic ,assign) CGFloat videoLength;
 @property (nonatomic ,strong) id timeObserver;
 
+@property (nonatomic, assign) BOOL canRefreshSlider;
+
 @end
 
 
@@ -93,6 +95,17 @@
     return showString;
 }
 
+- (void)jumpToPercent:(CGFloat)percent
+{
+    _canRefreshSlider = NO;
+    NSTimeInterval toTime = percent *_videoLength;
+    [_player seekToTime:CMTimeMake(toTime, 1) completionHandler:^(BOOL finished)
+    {
+        _canRefreshSlider = finished;
+    }];
+
+}
+
 
 #pragma mark - Private methods
 #pragma mark -- KVO methods
@@ -124,6 +137,7 @@
 //                NSLog(@"AVPlayerItemStatusReadyToPlay");
                 _videoLength = floor(_item.asset.duration.value * 1.0/ _item.asset.duration.timescale);
                 [_player play];
+                _canRefreshSlider = YES;
             }
                 break;
             case AVPlayerItemStatusUnknown:
@@ -211,7 +225,7 @@
         NSString *totalString = [weakSelf timeShowStringFromTime:weakSelf.videoLength];
         NSString *showString = [NSString stringWithFormat:@"%@/%@", currentString,totalString];
         
-        if (weakSelf.delegate && [(NSObject *)weakSelf.delegate respondsToSelector:@selector(mg_playerView:didChangeWithCurrentTime:sliderValue:)])
+        if (weakSelf.delegate && [(NSObject *)weakSelf.delegate respondsToSelector:@selector(mg_playerView:didChangeWithCurrentTime:sliderValue:)] && _canRefreshSlider)
         {
             [weakSelf.delegate mg_playerView:weakSelf didChangeWithCurrentTime:showString sliderValue:currentSliderValue];
         }

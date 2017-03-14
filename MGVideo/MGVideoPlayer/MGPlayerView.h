@@ -30,6 +30,8 @@
 
 - (NSString *)timeShowStringFromSliderValue:(CGFloat)value; //0-1
 
+- (void )jumpToPercent:(CGFloat)percent; //0-1
+
 @end
 
 

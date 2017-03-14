@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MGVideo/MGVideoPlayer/MGPlayerView.m"
-            timestampString = "511174696.63956"
+            timestampString = "511176093.47381"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "248"
-            endingLineNumber = "248"
+            startingLineNumber = "262"
+            endingLineNumber = "262"
             landmarkName = "-timeShowStringFromTime:"
             landmarkType = "7">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MGVideo/MGVideoPlayer/MGPlayerView.m"
-            timestampString = "511174696.63956"
+            timestampString = "511176093.47381"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "242"
-            endingLineNumber = "242"
+            startingLineNumber = "256"
+            endingLineNumber = "256"
             landmarkName = "-timeShowStringFromTime:"
             landmarkType = "7">
          </BreakpointContent>

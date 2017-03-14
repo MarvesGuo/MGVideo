@@ -8,7 +8,6 @@
 
 #import "MGPlayerViewController.h"
 #import "MGPlayerView.h"
-#import "VideoView.h"
 
 @interface MGPlayerViewController ()
 <
@@ -95,9 +94,9 @@
 }
 - (void)sliderChangeEndAction:(UISlider *)slider
 {
-    __isSliderDragging = NO;
-    
     //跳到具体播放位置
+    [__playerView jumpToPercent:slider.value];
+    __isSliderDragging = NO;
 }
 
 - (void)sliderChangeOutEndAction:(UISlider *)slider
@@ -148,8 +147,6 @@
     [self _addBottomView];
     
     [self _addGestures];
-    
-
 }
 
 - (void)_addBackButton
@@ -203,7 +200,7 @@
     timeLabel.textColor = [UIColor whiteColor];
     timeLabel.textAlignment = NSTextAlignmentLeft;
     timeLabel.adjustsFontSizeToFitWidth = YES;
-    timeLabel.text = @"00:00";
+    timeLabel.text = @"00:00/00:00";
     [bottomView addSubview:timeLabel];
     __timeLabel = timeLabel;
     

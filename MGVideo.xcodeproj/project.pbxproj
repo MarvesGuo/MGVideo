@@ -18,7 +18,6 @@
 		9E20DF0F1E7790ED00B035A0 /* MGVideoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E20DF0E1E7790ED00B035A0 /* MGVideoUITests.m */; };
 		9E20DFEB1E77968B00B035A0 /* MGPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E20DFEA1E77968B00B035A0 /* MGPlayerViewController.m */; };
 		9E20DFEE1E779FB900B035A0 /* MGPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E20DFED1E779FB900B035A0 /* MGPlayerView.m */; };
-		9E20DFF11E77BAA000B035A0 /* VideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E20DFF01E77BAA000B035A0 /* VideoView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,8 +59,6 @@
 		9E20DFEA1E77968B00B035A0 /* MGPlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGPlayerViewController.m; sourceTree = "<group>"; };
 		9E20DFEC1E779FB900B035A0 /* MGPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGPlayerView.h; sourceTree = "<group>"; };
 		9E20DFED1E779FB900B035A0 /* MGPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGPlayerView.m; sourceTree = "<group>"; };
-		9E20DFEF1E77BAA000B035A0 /* VideoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoView.h; sourceTree = "<group>"; };
-		9E20DFF01E77BAA000B035A0 /* VideoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,8 +157,6 @@
 				9E20DFEA1E77968B00B035A0 /* MGPlayerViewController.m */,
 				9E20DFEC1E779FB900B035A0 /* MGPlayerView.h */,
 				9E20DFED1E779FB900B035A0 /* MGPlayerView.m */,
-				9E20DFEF1E77BAA000B035A0 /* VideoView.h */,
-				9E20DFF01E77BAA000B035A0 /* VideoView.m */,
 			);
 			path = MGVideoPlayer;
 			sourceTree = "<group>";
@@ -302,7 +297,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9E20DFF11E77BAA000B035A0 /* VideoView.m in Sources */,
 				9E20DEEE1E7790ED00B035A0 /* ViewController.m in Sources */,
 				9E20DFEE1E779FB900B035A0 /* MGPlayerView.m in Sources */,
 				9E20DEEB1E7790ED00B035A0 /* AppDelegate.m in Sources */,
