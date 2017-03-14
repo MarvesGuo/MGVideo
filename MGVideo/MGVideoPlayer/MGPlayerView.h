@@ -28,6 +28,8 @@
 - (void)pause;
 - (void)stop;
 
+- (NSString *)timeShowStringFromSliderValue:(CGFloat)value; //0-1
+
 @end
 
 

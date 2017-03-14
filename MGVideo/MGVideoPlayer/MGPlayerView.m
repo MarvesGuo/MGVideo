@@ -84,6 +84,16 @@
 
 }
 
+- (NSString *)timeShowStringFromSliderValue:(CGFloat)value
+{
+    NSString *currentString = [self timeShowStringFromTime:self.videoLength * value];
+    NSString *totalString = [self timeShowStringFromTime:self.videoLength];
+    NSString *showString = [NSString stringWithFormat:@"%@/%@", currentString,totalString];
+    
+    return showString;
+}
+
+
 #pragma mark - Private methods
 #pragma mark -- KVO methods
 

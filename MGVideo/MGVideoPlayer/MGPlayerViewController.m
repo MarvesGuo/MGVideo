@@ -11,12 +11,17 @@
 #import "VideoView.h"
 
 @interface MGPlayerViewController ()
+<
+    MGPlayerViewDelegate
+>
 
 @property (nonatomic,weak) MGPlayerView   *_playerView;
 
 @property (nonatomic,weak) UIButton   *_playButton;
 @property (nonatomic,weak) UISlider   *_slider;
 @property (nonatomic,weak) UILabel    *_timeLabel;
+
+@property (nonatomic,assign) BOOL _isSliderDragging;
 
 @end
 
@@ -50,8 +55,11 @@
 #pragma mark - MGPlayerViewDelegate
 - (void)mg_playerView:(MGPlayerView *)playerView didChangeWithCurrentTime:(NSString *)timeString sliderValue:(float)sliderValue
 {
-    __timeLabel.text = timeString;
-    [__slider setValue:sliderValue];
+    if (!__isSliderDragging)
+    {
+        __timeLabel.text = timeString;
+        [__slider setValue:sliderValue];
+    }
 }
 
 
@@ -75,23 +83,34 @@
     }
 }
 
-- (void)sliderValueChangeAction:(UISlider *)slider
+- (void)sliderValueDidChangeAction:(UISlider *)slider
 {
     //改变时间
+    __timeLabel.text = [__playerView timeShowStringFromSliderValue:slider.value];
 }
 
+- (void)sliderValueWillChangeAction:(UISlider *)slider
+{
+    __isSliderDragging = YES;
+}
 - (void)sliderChangeEndAction:(UISlider *)slider
 {
+    __isSliderDragging = NO;
+    
     //跳到具体播放位置
 }
 
 - (void)sliderChangeOutEndAction:(UISlider *)slider
 {
+    __isSliderDragging = NO;
+    
     //还原 显示Label
 }
 
 - (void)sliderChangeCancelAction:(UISlider *)slider
 {
+    __isSliderDragging = NO;
+    
     // do nothing
 }
 
@@ -169,7 +188,8 @@
     UISlider *slider = [[UISlider alloc]initWithFrame:CGRectMake(__playButton.frame.origin.x + __playButton.frame.size.width + 20, __playButton.frame.origin.y, [UIScreen mainScreen].bounds.size.height - 200, 40)];
     [slider setMinimumValue:0];
     [slider setMaximumValue:1];
-    [slider addTarget:self action:@selector(sliderValueChangeAction:) forControlEvents:UIControlEventValueChanged];
+    [slider addTarget:self action:@selector(sliderValueDidChangeAction:) forControlEvents:UIControlEventValueChanged];
+    [slider addTarget:self action:@selector(sliderValueWillChangeAction:) forControlEvents:UIControlEventTouchDown];
     [slider addTarget:self action:@selector(sliderChangeEndAction:) forControlEvents:UIControlEventTouchUpInside];
     [slider addTarget:self action:@selector(sliderChangeOutEndAction:) forControlEvents:UIControlEventTouchUpOutside];
     [slider addTarget:self action:@selector(sliderChangeCancelAction:) forControlEvents:UIControlEventTouchCancel];
